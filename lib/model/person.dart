@@ -1,6 +1,5 @@
 class Person {
-  final int id;
-  final String title, description;
+  String id, title, description;
 
   Person({
     required this.id,
@@ -8,19 +7,19 @@ class Person {
     required this.description,
   });
 
-  factory Person.getNewEmpty() {
-    return Person(
-      id: 0,
-      title: "Title...",
-      description: 'Description...',
-    );
+  static Map<String, dynamic> toMap(Person person) {
+    return {
+      'id': person.id.toString(),
+      'title': person.title,
+      'description': person.description,
+    };
   }
 
-  factory Person.fromMap(Map<dynamic, dynamic> map) {
+  factory Person.fromMap(Map<String, dynamic> map) {
     return Person(
-      id: map['id'] ?? 0,
-      title: map['title'] ?? "Title...",
-      description: map['description'] ?? 'Description...',
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
     );
   }
 }

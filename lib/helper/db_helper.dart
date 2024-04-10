@@ -4,17 +4,22 @@ import 'package:sqlite_demo/model/person.dart';
 class DBHelper extends SqfliteDatabase {
   Future<List<Person>> getAllPersons() async {
     List<Person> persons = [];
-    String sql = "SELECT * FROM person";
-    List<Map<String, dynamic>> map = await query(sql);
-    for (var i = 0; i < map.length; i++) {
-      persons.add(Person.fromMap(map[i]));
+    // String sql = "SELECT * FROM person";
+    List<Map<String, dynamic>> fetechData = await query('person');
+    for (var map in fetechData) {
+      persons.add(Person.fromMap(map));
     }
     return persons;
   }
 
   Future<int> insertNewPerson(Person person) async {
-    String sql = "INSERT INTO person (title, description) VALUES (?, ?)";
-    int result = await insert(sql, [person.title, person.description]);
-    return result;
+    return await insert('person', person);
+  }
+  Future<int> updatePerson(Person person ,String id) async {
+    return await update('person', Person.toMap(person), id);
+  }
+
+  Future<int> deletePerson(String id) async {
+    return await delete('person', id);
   }
 }

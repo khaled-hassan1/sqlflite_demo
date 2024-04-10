@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter/material.dart';
+import 'package:sqlite_demo/model/person.dart';
 
 class SqfliteDatabase {
-  late Database _database;
+  Database? _database;
 
   Future<Database> getDatabaseInstance() async {
-    if (_database.isOpen) {
-      return _database;
+    if (_database != null && _database!.isOpen) {
+      return _database!;
     } else {
       _database = await _initializeDatabase();
-      return _database;
+      return _database!;
     }
   }
 
@@ -18,83 +19,48 @@ class SqfliteDatabase {
     String dbPath = await getDatabasesPath();
     String path = join(dbPath, 'sqflite.db');
 
-    return await openDatabase(
+    _database = await openDatabase(
       path,
       version: 1,
       onCreate: _onCreate,
     );
+
+    debugPrint('Database initialized');
+    return _database!;
   }
 
   Future<void> _onCreate(Database db, int _) async {
-    await db.execute(
-      'CREATE TABLE person(id INTEGER PRIMARY KEY, title TEXT, description TEXT)',
-    );
-    debugPrint('Database created');
+    try {
+      await db.execute(
+        '''CREATE TABLE person
+        (id TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL)''',
+      );
+      debugPrint('Database created');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<List<Map<String, dynamic>>> query(String sqlTxt) async {
     Database db = await getDatabaseInstance();
-    return await db.rawQuery(sqlTxt);
+    List<Map<String, dynamic>> result = await db.query(sqlTxt);
+    return result;
   }
 
-  Future<int> insert(String sqlTxt, List<dynamic> values) async {
+  Future<int> insert(String tableName, Person person) async {
     Database db = await getDatabaseInstance();
-    return await db.rawInsert(sqlTxt, values);
+    Map<String, dynamic> values = Person.toMap(person);
+    return await db.insert(tableName, values,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<int> update(String sqlTxt) async {
+  Future<int> update(String sqlTxt, Map<String, dynamic> person, String id) async {
     Database db = await getDatabaseInstance();
-    return await db.rawUpdate(sqlTxt);
+    return await db.update(sqlTxt, person, where: 'id =  ?', whereArgs: [id]);
   }
 
-  Future<int> delete(String sqlTxt) async {
+  Future<int> delete(String sqlTxt, String id) async {
     Database db = await getDatabaseInstance();
-    return await db.rawDelete(sqlTxt);
+    return await db.delete(sqlTxt, where: 'id = ?', whereArgs: [id]);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// class SqliteHelper {
-//   static Database? _db;
-
-//   Future<Database?> get getInstance async {
-//     _db ??= await instance();
-//     return _db;
-//   }
-
-//   instance() async {
-//     String dataBasePath = await getDatabasesPath();
-//     String path = join(dataBasePath, 'sqflite.db');
-//     Database database = await openDatabase(
-//       path,
-//       version: 1,
-//       onCreate: (db, version) {
-//         return db.execute('''
-// CREATE TABLE test_1 (id INTEGER PRIMARY KEY, name TEXT, age INTEGER);
-// CREATE TABLE test_2 (id INTEGER PRIMARY KEY, name TEXT, age INTEGER);
-// ''');
-
-//       },
-//     );
-//     return database;
-//   }
-// }
