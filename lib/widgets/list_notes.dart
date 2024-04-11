@@ -3,17 +3,22 @@ import 'package:flutter/material.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
 
+// ignore: must_be_immutable
 class ListNotes extends StatefulWidget {
   final List<Person> persons;
   final Function() loadPersons;
   final TextEditingController _titleController;
   final TextEditingController _descriptionController;
-  const ListNotes({
+  bool isEditing = false;
+  final Function(Person person) onNoteTap;
+  ListNotes({
     super.key,
     required this.persons,
     required this.loadPersons,
     required TextEditingController titleController,
     required TextEditingController descriptionController,
+    required this.isEditing,
+    required this.onNoteTap,
   })  : _titleController = titleController,
         _descriptionController = descriptionController,
         super();
@@ -53,19 +58,8 @@ class _ListNotesState extends State<ListNotes> {
             onTap: () async {
               widget._titleController.text = person.title;
               widget._descriptionController.text = person.description;
-              Person updatePerson = Person(
-                  id: person.id,
-                  title: widget._titleController.text,
-                  description: widget._descriptionController.text);
-              person.description = widget._descriptionController.text;
-              await _dbHelper.updatePerson(updatePerson, person.id);
-              int personIndex = widget.persons
-                  .indexWhere((element) => element.id == person.id);
-              if (personIndex != -1) {
-                setState(() {
-                  widget.persons[personIndex] =updatePerson;
-                });
-              }
+              await _dbHelper.updatePerson(person, person.id);
+              widget.onNoteTap(person);
             },
           ),
         );
@@ -73,4 +67,3 @@ class _ListNotesState extends State<ListNotes> {
     );
   }
 }
- 

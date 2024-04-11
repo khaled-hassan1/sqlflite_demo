@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import '../helper/db_helper.dart';
 import '../model/person.dart';
 import '../widgets/list_notes.dart';
 
 class HomePageScreen extends StatefulWidget {
-  const HomePageScreen({Key? key}) : super(key: key);
+  const HomePageScreen({super.key});
 
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
@@ -18,7 +15,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
   final TextEditingController _controllerTitle = TextEditingController();
   final TextEditingController _controllerDescription = TextEditingController();
   final DBHelper _dbHelper = DBHelper();
-  int _count = 0;
+  bool _isEditing = false;
+  late Person _editingPerson;
 
   @override
   void initState() {
@@ -38,11 +36,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
     String description = _controllerDescription.text.trim();
     if (title.isNotEmpty || description.isNotEmpty) {
       var id = DateTime.now().toString();
-      Person person = Person(id: id, title: title, description: description);
-      int result = await _dbHelper.insertNewPerson(person);
+      Person newPerson = Person(id: id, title: title, description: description);
+      int result = await _dbHelper.insertNewPerson(newPerson);
       if (result >= 0) {
         setState(() {
-          persons.add(person);
+          persons.add(newPerson);
           _controllerTitle.clear();
           _controllerDescription.clear();
         });
@@ -53,24 +51,26 @@ class _HomePageScreenState extends State<HomePageScreen> {
   int getCount() {
     return persons.length;
   }
-  Future<void> _editPerson(Person person) async {
-  String title = _controllerTitle.text.trim();
-  String description = _controllerDescription.text.trim();
-  if (title.isNotEmpty || description.isNotEmpty) {
-    // Update the person object with the new data
-    person.title = title;
-    person.description = description;
-    // Update the person in the database
-    await _dbHelper.updatePerson(person, person.id);
-    // Update the UI
-    setState(() {
-      // No need to add a new person, just update the existing one
-      _controllerTitle.clear();
-      _controllerDescription.clear();
-    });
-  }
-}
 
+  Future<void> _editPerson() async {
+    String title = _controllerTitle.text.trim();
+    String description = _controllerDescription.text.trim();
+    if (title.isNotEmpty || description.isNotEmpty) {
+      // Update the person object with the new data
+      _editingPerson.title = title;
+      _editingPerson.description = description;
+      // Update the person in the database
+      await _dbHelper.updatePerson(_editingPerson, _editingPerson.id);
+      // Update the UI
+      setState(() {
+        _isEditing = false; // Exit editing mode
+        _editingPerson =
+            Person(id: '', title: '', description: ''); // Reset editing person
+        _controllerTitle.clear();
+        _controllerDescription.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +90,15 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 loadPersons: _loadPersons,
                 titleController: _controllerTitle,
                 descriptionController: _controllerDescription,
+                isEditing: _isEditing,
+                onNoteTap: (Person person) {
+                  setState(() {
+                    _isEditing = true;
+                    _editingPerson = person;
+                    _controllerTitle.text = person.title;
+                    _controllerDescription.text = person.description;
+                  });
+                },
               ),
             ),
             const Divider(),
@@ -115,8 +124,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: _addPerson,
-                      child: const Text('Save'),
+                      onPressed: _isEditing ? _editPerson : _addPerson,
+                      child: _isEditing
+                          ? const Text('Update')
+                          : const Text('Save'),
                     ),
                   ],
                 ),
