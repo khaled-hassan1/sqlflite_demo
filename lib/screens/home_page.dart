@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
 import '../widgets/list_notes.dart';
@@ -76,14 +77,15 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text("Notes"),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
-              color: Colors.grey.shade400,
-              height: 300,
+              color: Colors.brown.shade400,
+              height: 350,
               width: double.infinity,
               child: ListNotes(
                 persons: persons,
@@ -103,7 +105,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
             ),
             const Divider(),
             Container(
-              color: Colors.grey.shade400,
+              color: Colors.blueGrey.shade100,
               height: 200,
               width: double.infinity,
               child: SingleChildScrollView(
@@ -123,11 +125,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         hintText: 'Description...',
                       ),
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     ElevatedButton(
                       onPressed: _isEditing ? _editPerson : _addPerson,
-                      child: _isEditing
-                          ? const Text('Update')
-                          : const Text('Save'),
+                      child: Text(_isEditing ? 'Update' : 'Save'),
                     ),
                   ],
                 ),

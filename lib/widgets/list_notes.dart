@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
 
-// ignore: must_be_immutable
 class ListNotes extends StatefulWidget {
   final List<Person> persons;
   final Function() loadPersons;
   final TextEditingController _titleController;
   final TextEditingController _descriptionController;
-  bool isEditing = false;
+  final bool isEditing;
   final Function(Person person) onNoteTap;
-  ListNotes({
+  const ListNotes({
     super.key,
     required this.persons,
     required this.loadPersons,
@@ -40,7 +39,7 @@ class _ListNotesState extends State<ListNotes> {
           child: ListTile(
             title: Text(person.title),
             subtitle: Text(person.description),
-            leading: const Icon(Icons.person),
+            leading: const Icon(Icons.note_alt),
             trailing: IconButton(
               icon: const Icon(
                 Icons.delete,

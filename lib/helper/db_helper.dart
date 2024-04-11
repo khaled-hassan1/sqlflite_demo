@@ -4,7 +4,6 @@ import 'package:sqlite_demo/model/person.dart';
 class DBHelper extends SqfliteDatabase {
   Future<List<Person>> getAllPersons() async {
     List<Person> persons = [];
-    // String sql = "SELECT * FROM person";
     List<Map<String, dynamic>> fetechData = await query('person');
     for (var map in fetechData) {
       persons.add(Person.fromMap(map));
