@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
@@ -79,79 +80,70 @@ class _HomePageScreenState extends State<HomePageScreen> {
         centerTitle: true,
         title: const Text("Notes"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                color: Colors.brown.shade400,
-                height: 400,
-                width: double.infinity,
-                child: ListNotes(
-                  persons: persons,
-                  loadPersons: _loadPersons,
-                  titleController: _controllerTitle,
-                  descriptionController: _controllerDescription,
-                  isEditing: _isEditing,
-                  onNoteTap: (Person person) {
-                    setState(() {
-                      _isEditing = true;
-                      _editingPerson = person;
-                      _controllerTitle.text = person.title;
-                      _controllerDescription.text = person.description;
-                    });
-                  },
-                ),
-              ),
-              const Divider(),
-              Container(
-                color: Colors.blueGrey.shade100,
-                height: 300,
-                width: double.infinity,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        TextField(
-                          onTapOutside: (_) => unFocus(context),
-                          controller: _controllerTitle,
-                          decoration: const InputDecoration(
-                            hintText: "Title...",
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                          ),
-                        ),
-                         const SizedBox(
-                          height: 20,
-                        ),
-                        TextField(
-                          onTapOutside: (_) => unFocus(context),
-                          controller: _controllerDescription,
-                          decoration: const InputDecoration(
-                            hintText: 'Description...',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ElevatedButton(
-                          onPressed: _isEditing ? _editPerson : _addPerson,
-                          child: Text(_isEditing ? 'Update' : 'Save'),
-                        ),
-                      ],
+      body: ListView(
+        children: [
+          Container(
+              color: Theme.of(context).colorScheme.primary.withAlpha(10),
+              height: MediaQuery.of(context).size.height / 2,
+              width: double.infinity,
+              child: ListNotes(
+                persons: persons,
+                loadPersons: _loadPersons,
+                titleController: _controllerTitle,
+                descriptionController: _controllerDescription,
+                isEditing: _isEditing,
+                onNoteTap: (Person person) {
+                  setState(() {
+                    _isEditing = true;
+                    _editingPerson = person;
+                    _controllerTitle.text = person.title;
+                    _controllerDescription.text = person.description;
+                  });
+                },
+              )),
+          // const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    textInputAction: TextInputAction.next,
+                    onTapOutside: (_) => unFocus(context),
+                    controller: _controllerTitle,
+                    decoration: const InputDecoration(
+                      hintText: "Title...",
+                      border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20))),
                     ),
                   ),
-                ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    textInputAction: TextInputAction.done,
+                    onTapOutside: (_) => unFocus(context),
+                    controller: _controllerDescription,
+                    decoration: const InputDecoration(
+                      hintText: 'Description...',
+                      border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20))),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: _isEditing ? _editPerson : _addPerson,
+                    child: Text(_isEditing ? 'Update' : 'Save'),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       persistentFooterButtons: [
         Center(
@@ -162,6 +154,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   void unFocus(BuildContext context) {
+    _controllerTitle.clear();
+    _controllerDescription.clear();
     FocusScope.of(context).unfocus();
   }
 }
