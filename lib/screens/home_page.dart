@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
+import '../widgets/center_text_widget.dart';
 import '../widgets/list_notes.dart';
+import '../widgets/text_field_container.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -12,7 +13,7 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  List<Person> persons = [];
+  List<Person> _persons = [];
   final TextEditingController _controllerTitle = TextEditingController();
   final TextEditingController _controllerDescription = TextEditingController();
   final DBHelper _dbHelper = DBHelper();
@@ -28,7 +29,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Future<void> _loadPersons() async {
     List<Person> fetchedPersons = await _dbHelper.getAllPersons();
     setState(() {
-      persons = fetchedPersons;
+      _persons = fetchedPersons;
     });
   }
 
@@ -41,7 +42,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
       int result = await _dbHelper.insertNewPerson(newPerson);
       if (result >= 0) {
         setState(() {
-          persons.add(newPerson);
+          _persons.add(newPerson);
           _controllerTitle.clear();
           _controllerDescription.clear();
         });
@@ -49,8 +50,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
     }
   }
 
-  int getCount() {
-    return persons.length;
+  int _getCount() {
+    return _persons.length;
   }
 
   Future<void> _editPerson() async {
@@ -80,74 +81,65 @@ class _HomePageScreenState extends State<HomePageScreen> {
         centerTitle: true,
         title: const Text("Notes"),
       ),
-      body: ListView(
-        children: [
-          Container(
-              color: Theme.of(context).colorScheme.primary.withAlpha(10),
-              height: MediaQuery.of(context).size.height / 2,
-              width: double.infinity,
-              child: ListNotes(
-                persons: persons,
-                loadPersons: _loadPersons,
-                titleController: _controllerTitle,
-                descriptionController: _controllerDescription,
-                isEditing: _isEditing,
-                onNoteTap: (Person person) {
-                  setState(() {
-                    _isEditing = true;
-                    _editingPerson = person;
-                    _controllerTitle.text = person.title;
-                    _controllerDescription.text = person.description;
-                  });
-                },
-              )),
-          // const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(
-                    textInputAction: TextInputAction.next,
-                    onTapOutside: (_) => unFocus(context),
-                    controller: _controllerTitle,
-                    decoration: const InputDecoration(
-                      hintText: "Title...",
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    textInputAction: TextInputAction.done,
-                    onTapOutside: (_) => unFocus(context),
-                    controller: _controllerDescription,
-                    decoration: const InputDecoration(
-                      hintText: 'Description...',
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: _isEditing ? _editPerson : _addPerson,
-                    child: Text(_isEditing ? 'Update' : 'Save'),
-                  ),
-                ],
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+                color: const Color.fromARGB(255, 236, 191, 176),
+                // color: Theme.of(context).colorScheme.primary.withAlpha(10),
+                height: MediaQuery.of(context).size.height / 2,
+                width: double.infinity,
+                child: _getCount() == 0
+                    ? const CenterTextWidget()
+                    : ListNotes(
+                        persons: _persons,
+                        loadPersons: _loadPersons,
+                        titleController: _controllerTitle,
+                        descriptionController: _controllerDescription,
+                        isEditing: _isEditing,
+                        onNoteTap: (Person person) {
+                          setState(() {
+                            _isEditing = true;
+                            _editingPerson = person;
+                            _controllerTitle.text = person.title;
+                            _controllerDescription.text = person.description;
+                          });
+                        },
+                      )),
+            const Divider(
+              endIndent: 100,
+              indent: 100,
             ),
-          ),
-        ],
+            TextFieldContainer(
+              onTapOutside: (_) => unFocus(context),
+              controllerTitle: _controllerTitle,
+              controllerDescription: _controllerDescription,
+              isEditing: _isEditing,
+              onPressedEdit: _editPerson,
+              onPressedAdd: _addPerson,
+            ),
+          ],
+        ),
       ),
       persistentFooterButtons: [
         Center(
-          child: Text('Notes: ${getCount().toString()}'),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Notes: ',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                TextSpan(
+                  text: _getCount().toString(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(color: Colors.deepOrange),
+                )
+              ],
+            ),
+          ),
         )
       ],
     );

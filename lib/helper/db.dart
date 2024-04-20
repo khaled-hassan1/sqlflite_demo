@@ -54,7 +54,8 @@ class SqfliteDatabase {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<int> update(String sqlTxt, Map<String, dynamic> person, String id) async {
+  Future<int> update(
+      String sqlTxt, Map<String, dynamic> person, String id) async {
     Database db = await getDatabaseInstance();
     return await db.update(sqlTxt, person, where: 'id =  ?', whereArgs: [id]);
   }
@@ -62,5 +63,13 @@ class SqfliteDatabase {
   Future<int> delete(String sqlTxt, String id) async {
     Database db = await getDatabaseInstance();
     return await db.delete(sqlTxt, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> close() async {
+    if (_database != null && _database!.isOpen) {
+      await _database!.close();
+      _database = null;
+      debugPrint('Database connection closed');
+    }
   }
 }
