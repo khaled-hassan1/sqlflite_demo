@@ -75,6 +75,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   @override
+  void dispose() {
+    _controllerDescription.dispose();
+    _controllerTitle.dispose();
+    _dbHelper.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

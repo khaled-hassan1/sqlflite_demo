@@ -30,13 +30,13 @@ class _ListNotesState extends State<ListNotes> {
   final DBHelper _dbHelper = DBHelper();
 
   @override
-  Widget build(BuildContext context) {   
-
+  Widget build(BuildContext context) {
     return ListView.builder(
       reverse: true,
       itemCount: widget.persons.length,
       itemBuilder: (context, index) {
         final person = widget.persons[index];
+
         return Card(
           margin: const EdgeInsets.all(8),
           child: ListTile(
