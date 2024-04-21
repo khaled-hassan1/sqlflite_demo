@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../generated/l10n.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
 import '../widgets/center_text_widget.dart';
@@ -6,7 +8,11 @@ import '../widgets/list_notes.dart';
 import '../widgets/text_field_container.dart';
 
 class HomePageScreen extends StatefulWidget {
-  const HomePageScreen({super.key});
+  final Locale locale;
+  final Function(Locale locale) onLocaleChanged;
+
+  const HomePageScreen(
+      {super.key, required this.locale, required this.onLocaleChanged});
 
   @override
   State<HomePageScreen> createState() => _HomePageScreenState();
@@ -19,11 +25,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
   final DBHelper _dbHelper = DBHelper();
   bool _isEditing = false;
   late Person _editingPerson;
+  Locale currentLocale = const Locale('en');
 
   @override
   void initState() {
     super.initState();
     _loadPersons();
+    currentLocale = widget.locale;
   }
 
   Future<void> _loadPersons() async {
@@ -84,10 +92,26 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    S local = S.of(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Notes"),
+        title: Text(local.title),
+        // const Text("Notes"),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.translate,
+          ),
+          onPressed: () {
+            Locale newLocale = currentLocale.languageCode == 'en'
+                ? const Locale('ar')
+                : const Locale('en');
+            setState(() {
+              currentLocale = newLocale;
+            });
+            widget.onLocaleChanged(newLocale);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -119,6 +143,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
               indent: 100,
             ),
             TextFieldContainer(
+              local: local,
               onTapOutside: (_) => unFocus(context),
               controllerTitle: _controllerTitle,
               controllerDescription: _controllerDescription,
@@ -135,7 +160,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: 'Notes: ',
+                  text: local.countNotes,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 TextSpan(
@@ -157,5 +182,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
     _controllerTitle.clear();
     _controllerDescription.clear();
     FocusScope.of(context).unfocus();
+  }
+
+  String isArabic() {
+    return Intl.getCurrentLocale();
   }
 }

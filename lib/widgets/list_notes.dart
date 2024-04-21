@@ -10,6 +10,7 @@ class ListNotes extends StatefulWidget {
   final TextEditingController _descriptionController;
   final bool isEditing;
   final Function(Person person) onNoteTap;
+
   const ListNotes({
     super.key,
     required this.persons,

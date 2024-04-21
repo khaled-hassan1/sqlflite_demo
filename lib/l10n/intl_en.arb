@@ -1,0 +1,11 @@
+{
+  "appName": "My Notes",
+  "title": "My Notes",
+  "save": "Save",
+  "edit": "Edit",
+  "hintTitle": "Title...",
+  "hintDec": "Description...",
+  "labelTitle": "Title",
+  "labelDec": "Description",
+  "countNotes": "Notes: "
+}
