@@ -7,5 +7,6 @@
   "hintDec": "Description...",
   "labelTitle": "Title",
   "labelDec": "Description",
-  "countNotes": "Notes: "
+  "countNotes": "Notes: ",
+  "emptyList":"Add Some Notes!"
 }

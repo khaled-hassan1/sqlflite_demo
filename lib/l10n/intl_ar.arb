@@ -7,5 +7,6 @@
   "hintDec": "الوصف...",
   "labelTitle": "العنوان",
   "labelDec": "الوصف",
-  "countNotes": "عدد الملاحظات: "
+  "countNotes": "عدد الملاحظات: ",
+  "emptyList":"أضف بعض الملاحظات!"
 }

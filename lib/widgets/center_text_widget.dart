@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../generated/l10n.dart';
+
 class CenterTextWidget extends StatelessWidget {
   const CenterTextWidget({
     super.key,
@@ -9,7 +11,7 @@ class CenterTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Add Some Notes!',
+        S.of(context).emptyList,
         style: Theme.of(context)
             .textTheme
             .titleLarge!

@@ -139,6 +139,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Add Some Notes!`
+  String get emptyList {
+    return Intl.message(
+      'Add Some Notes!',
+      name: 'emptyList',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "appName": MessageLookupByLibrary.simpleMessage("ملاحظاتي"),
         "countNotes": MessageLookupByLibrary.simpleMessage("عدد الملاحظات: "),
         "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
+        "emptyList": MessageLookupByLibrary.simpleMessage("أضف بعض الملاحظات!"),
         "hintDec": MessageLookupByLibrary.simpleMessage("الوصف..."),
         "hintTitle": MessageLookupByLibrary.simpleMessage("العنوان..."),
         "labelDec": MessageLookupByLibrary.simpleMessage("الوصف"),

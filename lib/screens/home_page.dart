@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import '../generated/l10n.dart';
 import '../helper/db_helper.dart';
 import '../model/person.dart';
@@ -182,9 +182,5 @@ class _HomePageScreenState extends State<HomePageScreen> {
     _controllerTitle.clear();
     _controllerDescription.clear();
     FocusScope.of(context).unfocus();
-  }
-
-  String isArabic() {
-    return Intl.getCurrentLocale();
   }
 }
