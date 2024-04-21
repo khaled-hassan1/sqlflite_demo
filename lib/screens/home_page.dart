@@ -26,12 +26,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
   bool _isEditing = false;
   late Person _editingPerson;
   Locale currentLocale = const Locale('en');
+  late FocusNode myFocusNode;
 
   @override
   void initState() {
     super.initState();
     _loadPersons();
     currentLocale = widget.locale;
+    myFocusNode = FocusNode();
   }
 
   Future<void> _loadPersons() async {
@@ -87,6 +89,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
     _controllerDescription.dispose();
     _controllerTitle.dispose();
     _dbHelper.close();
+    myFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -130,6 +134,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         descriptionController: _controllerDescription,
                         isEditing: _isEditing,
                         onNoteTap: (Person person) {
+                          myFocusNode.requestFocus();
                           setState(() {
                             _isEditing = true;
                             _editingPerson = person;
@@ -143,6 +148,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
               indent: 100,
             ),
             TextFieldContainer(
+              myFocusNode: myFocusNode,
               local: local,
               onTapOutside: (_) => unFocus(context),
               controllerTitle: _controllerTitle,
