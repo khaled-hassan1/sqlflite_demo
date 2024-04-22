@@ -11,7 +11,7 @@ class CenterTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        S.of(context).emptyList,
+        S.of(context).textEmptyList,
         style: Theme.of(context)
             .textTheme
             .titleLarge!

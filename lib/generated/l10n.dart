@@ -141,10 +141,10 @@ class S {
   }
 
   /// `Add Some Notes!`
-  String get emptyList {
+  String get textEmptyList {
     return Intl.message(
       'Add Some Notes!',
-      name: 'emptyList',
+      name: 'textEmptyList',
       desc: '',
       args: [],
     );
