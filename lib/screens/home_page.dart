@@ -48,7 +48,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     String title = _controllerTitle.text.trim();
     String description = _controllerDescription.text.trim();
     if (title.isNotEmpty || description.isNotEmpty) {
-      var id = DateTime.now().toString();
+      String id = DateTime.now().toString();
       Note newNote = Note(id: id, title: title, description: description);
       int result = await _dbHelper.insertNewNote(newNote);
       if (result >= 0) {

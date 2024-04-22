@@ -37,17 +37,18 @@ class _ListNotesState extends State<ListNotes> {
       reverse: true,
       itemCount: widget.notes.length,
       itemBuilder: (context, index) {
-        final person = widget.notes[index];
+        final note = widget.notes[index];
 
         return Card(
           margin: AppSettings.all,
           child: ListTile(
+            isThreeLine: true,
             title: Text(
-              person.title,
+              note.title,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             subtitle: Text(
-              person.description,
+              '${note.description} /n ${note.id}',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
@@ -60,7 +61,7 @@ class _ListNotesState extends State<ListNotes> {
                 color: Colors.red,
               ),
               onPressed: () async {
-                await _dbHelper.deleteNote(person.id);
+                await _dbHelper.deleteNote(note.id);
                 setState(() {
                   // widget.persons.removeWhere(
                   //     (p) => p.id == person.id);
@@ -69,10 +70,10 @@ class _ListNotesState extends State<ListNotes> {
               },
             ),
             onTap: () async {
-              widget._titleController.text = person.title;
-              widget._descriptionController.text = person.description;
-              await _dbHelper.updateNote(person, person.id);
-              widget.onNoteTap(person);
+              widget._titleController.text = note.title;
+              widget._descriptionController.text = note.description;
+              await _dbHelper.updateNote(note, note.id);
+              widget.onNoteTap(note);
             },
           ),
         );
