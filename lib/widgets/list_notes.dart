@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:sqlite_demo/widgets/app_settings.dart';
 
 import '../helper/db_helper.dart';
-import '../model/person.dart';
+import '../model/note.dart';
 
 class ListNotes extends StatefulWidget {
-  final List<Person> persons;
-  final Function() loadPersons;
+  final List<Note> notes;
+  final Function() loadNotes;
   final TextEditingController _titleController;
   final TextEditingController _descriptionController;
   final bool isEditing;
-  final Function(Person person) onNoteTap;
+  final Function(Note note) onNoteTap;
 
   const ListNotes({
     super.key,
-    required this.persons,
-    required this.loadPersons,
+    required this.notes,
+    required this.loadNotes,
     required TextEditingController titleController,
     required TextEditingController descriptionController,
     required this.isEditing,
@@ -34,12 +35,12 @@ class _ListNotesState extends State<ListNotes> {
   Widget build(BuildContext context) {
     return ListView.builder(
       reverse: true,
-      itemCount: widget.persons.length,
+      itemCount: widget.notes.length,
       itemBuilder: (context, index) {
-        final person = widget.persons[index];
+        final person = widget.notes[index];
 
         return Card(
-          margin: const EdgeInsets.all(8),
+          margin: AppSettings.all,
           child: ListTile(
             title: Text(
               person.title,
@@ -59,18 +60,18 @@ class _ListNotesState extends State<ListNotes> {
                 color: Colors.red,
               ),
               onPressed: () async {
-                await _dbHelper.deletePerson(person.id);
+                await _dbHelper.deleteNote(person.id);
                 setState(() {
                   // widget.persons.removeWhere(
                   //     (p) => p.id == person.id);
-                  widget.loadPersons();
+                  widget.loadNotes();
                 });
               },
             ),
             onTap: () async {
               widget._titleController.text = person.title;
               widget._descriptionController.text = person.description;
-              await _dbHelper.updatePerson(person, person.id);
+              await _dbHelper.updateNote(person, person.id);
               widget.onNoteTap(person);
             },
           ),

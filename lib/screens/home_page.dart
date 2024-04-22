@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_settings.dart';
 import '../generated/l10n.dart';
 import '../helper/db_helper.dart';
-import '../model/person.dart';
+import '../model/note.dart';
 import '../widgets/center_text_widget.dart';
 import '../widgets/list_notes.dart';
 import '../widgets/text_field_container.dart';
 
 class HomePageScreen extends StatefulWidget {
   final Locale locale;
-  final Function(Locale locale) onLocaleChanged;
+  final Function(Locale locale, String langCode) onLocaleChanged;
 
   const HomePageScreen(
       {super.key, required this.locale, required this.onLocaleChanged});
@@ -19,40 +20,40 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  List<Person> _persons = [];
+  List<Note> _notes = [];
   final TextEditingController _controllerTitle = TextEditingController();
   final TextEditingController _controllerDescription = TextEditingController();
   final DBHelper _dbHelper = DBHelper();
   bool _isEditing = false;
-  late Person _editingPerson;
+  late Note _editingnotes;
   Locale currentLocale = const Locale('en');
   late FocusNode myFocusNode;
 
   @override
   void initState() {
     super.initState();
-    _loadPersons();
+    _loadNotes();
     currentLocale = widget.locale;
     myFocusNode = FocusNode();
   }
 
-  Future<void> _loadPersons() async {
-    List<Person> fetchedPersons = await _dbHelper.getAllPersons();
+  Future<void> _loadNotes() async {
+    List<Note> fetchedNotes = await _dbHelper.getAllNotes();
     setState(() {
-      _persons = fetchedPersons;
+      _notes = fetchedNotes;
     });
   }
 
-  Future<void> _addPerson() async {
+  Future<void> _addNotes() async {
     String title = _controllerTitle.text.trim();
     String description = _controllerDescription.text.trim();
     if (title.isNotEmpty || description.isNotEmpty) {
       var id = DateTime.now().toString();
-      Person newPerson = Person(id: id, title: title, description: description);
-      int result = await _dbHelper.insertNewPerson(newPerson);
+      Note newNote = Note(id: id, title: title, description: description);
+      int result = await _dbHelper.insertNewNote(newNote);
       if (result >= 0) {
         setState(() {
-          _persons.add(newPerson);
+          _notes.add(newNote);
           _controllerTitle.clear();
           _controllerDescription.clear();
         });
@@ -61,23 +62,23 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   int _getCount() {
-    return _persons.length;
+    return _notes.length;
   }
 
-  Future<void> _editPerson() async {
+  Future<void> _editNotes() async {
     String title = _controllerTitle.text.trim();
     String description = _controllerDescription.text.trim();
     if (title.isNotEmpty || description.isNotEmpty) {
       // Update the person object with the new data
-      _editingPerson.title = title;
-      _editingPerson.description = description;
+      _editingnotes.title = title;
+      _editingnotes.description = description;
       // Update the person in the database
-      await _dbHelper.updatePerson(_editingPerson, _editingPerson.id);
+      await _dbHelper.updateNote(_editingnotes, _editingnotes.id);
       // Update the UI
       setState(() {
         _isEditing = false; // Exit editing mode
-        _editingPerson =
-            Person(id: '', title: '', description: ''); // Reset editing person
+        _editingnotes =
+            Note(id: '', title: '', description: ''); // Reset editing person
         _controllerTitle.clear();
         _controllerDescription.clear();
       });
@@ -113,7 +114,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
             setState(() {
               currentLocale = newLocale;
             });
-            widget.onLocaleChanged(newLocale);
+            widget.onLocaleChanged(newLocale, newLocale.languageCode);
           },
         ),
       ),
@@ -128,18 +129,18 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 child: _getCount() == 0
                     ? const CenterTextWidget()
                     : ListNotes(
-                        persons: _persons,
-                        loadPersons: _loadPersons,
+                        notes: _notes,
+                        loadNotes: _loadNotes,
                         titleController: _controllerTitle,
                         descriptionController: _controllerDescription,
                         isEditing: _isEditing,
-                        onNoteTap: (Person person) {
+                        onNoteTap: (Note notes) {
                           myFocusNode.requestFocus();
                           setState(() {
                             _isEditing = true;
-                            _editingPerson = person;
-                            _controllerTitle.text = person.title;
-                            _controllerDescription.text = person.description;
+                            _editingnotes = notes;
+                            _controllerTitle.text = notes.title;
+                            _controllerDescription.text = notes.description;
                           });
                         },
                       )),
@@ -154,8 +155,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
               controllerTitle: _controllerTitle,
               controllerDescription: _controllerDescription,
               isEditing: _isEditing,
-              onPressedEdit: _editPerson,
-              onPressedAdd: _addPerson,
+              onPressedEdit: _editNotes,
+              onPressedAdd: _addNotes,
             ),
           ],
         ),
@@ -174,7 +175,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge!
-                      .copyWith(color: Colors.deepOrange),
+                      .copyWith(color: AppSettings.deepOrange),
                 )
               ],
             ),

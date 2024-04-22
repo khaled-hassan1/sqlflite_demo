@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../generated/l10n.dart';
+import './app_settings.dart';
 
 class TextFieldContainer extends StatelessWidget {
   final FocusNode myFocusNode;
@@ -27,7 +28,7 @@ class TextFieldContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: AppSettings.all,
       child: Column(
         children: [
           TextField(
@@ -40,9 +41,7 @@ class TextFieldContainer extends StatelessWidget {
               labelText: local.labelTitle,
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          AppSettings.sizedBox(20),
           TextField(
               textInputAction: TextInputAction.done,
               onTapOutside: (_) => onTapOutside(context),
@@ -51,9 +50,7 @@ class TextFieldContainer extends StatelessWidget {
                 hintText: local.hintDec,
                 labelText: local.labelDec,
               )),
-          const SizedBox(
-            height: 20,
-          ),
+          AppSettings.sizedBox(20),
           ElevatedButton(
             onPressed: isEditing ? onPressedEdit : onPressedAdd,
             child: Text(
@@ -61,7 +58,7 @@ class TextFieldContainer extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!
-                  .copyWith(color: Colors.deepOrange),
+                  .copyWith(color: AppSettings.deepOrange),
             ),
           )
         ],

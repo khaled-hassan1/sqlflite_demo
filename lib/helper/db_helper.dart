@@ -27,31 +27,31 @@
 // }
 // }
 import 'package:sqlite_demo/helper/db.dart';
-import 'package:sqlite_demo/model/person.dart';
+import 'package:sqlite_demo/model/note.dart';
 
 class DBHelper {
   final SqfliteDatabase _sqfliteDatabase = SqfliteDatabase();
 
-  Future<List<Person>> getAllPersons() async {
-    List<Person> persons = [];
+  Future<List<Note>> getAllNotes() async {
+    List<Note> notes = [];
     List<Map<String, dynamic>> fetechData =
-        await _sqfliteDatabase.query('person');
+        await _sqfliteDatabase.query('notes');
     for (var map in fetechData) {
-      persons.add(Person.fromMap(map));
+      notes.add(Note.fromMap(map));
     }
-    return persons;
+    return notes;
   }
 
-  Future<int> insertNewPerson(Person person) async {
-    return await _sqfliteDatabase.insert('person', person);
+  Future<int> insertNewNote(Note notes) async {
+    return await _sqfliteDatabase.insert('notes', notes);
   }
 
-  Future<int> updatePerson(Person person, String id) async {
-    return await _sqfliteDatabase.update('person', Person.toMap(person), id);
+  Future<int> updateNote(Note notes, String id) async {
+    return await _sqfliteDatabase.update('notes', Note.toMap(notes), id);
   }
 
-  Future<int> deletePerson(String id) async {
-    return await _sqfliteDatabase.delete('person', id);
+  Future<int> deleteNote(String id) async {
+    return await _sqfliteDatabase.delete('notes', id);
   }
 
   Future<void> close() async {

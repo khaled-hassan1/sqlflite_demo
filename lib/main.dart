@@ -50,6 +50,8 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqlite_demo/widgets/app_settings.dart';
 
 import '../screens/home_page.dart';
 import './generated/l10n.dart';
@@ -67,12 +69,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale _locale = const Locale('ar');
+  Locale _locale = const Locale('en');
 
   void _changeLocale(Locale newLocale) {
     setState(() {
       _locale = newLocale;
     });
+  }
+
+  Future<void> _loadLocale() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String languageCode = prefs.getString('language_code') ?? 'ar';
+    setState(() {
+      _locale = Locale(languageCode);
+    });
+  }
+
+  Future<void> _saveLocale(String languageCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language_code', languageCode);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
   }
 
   @override
@@ -98,22 +119,24 @@ class _MyAppState extends State<MyApp> {
         inputDecorationTheme: const InputDecorationTheme(
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20)))),
-        cardTheme: const CardTheme(color: Colors.white, elevation: 0),
+        cardTheme: const CardTheme(color: AppSettings.white, elevation: 0),
         appBarTheme: const AppBarTheme(
             iconTheme: IconThemeData(
               color: Colors.white,
               size: 28,
             ),
             elevation: 0,
-            titleTextStyle: TextStyle(color: Colors.white, fontSize: 25),
+            titleTextStyle: TextStyle(color:  AppSettings.white, fontSize: 25),
             backgroundColor: Color.fromARGB(234, 228, 73, 22)),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppSettings.deepOrange),
         useMaterial3: true,
       ),
       home: HomePageScreen(
-        locale: _locale,
-        onLocaleChanged: (locale) => _changeLocale(locale),
-      ),
+          locale: _locale,
+          onLocaleChanged: (locale, langCode) {
+            _saveLocale(langCode);
+            _changeLocale(locale);
+          }),
     );
   }
 }

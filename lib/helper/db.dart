@@ -1,7 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
-import 'package:sqlite_demo/model/person.dart';
+import 'package:sqlite_demo/model/note.dart';
 
 class SqfliteDatabase {
   Database? _database;
@@ -32,7 +32,7 @@ class SqfliteDatabase {
   Future<void> _onCreate(Database db, int _) async {
     try {
       await db.execute(
-        '''CREATE TABLE person
+        '''CREATE TABLE notes
         (id TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL)''',
       );
       debugPrint('Database created');
@@ -47,9 +47,9 @@ class SqfliteDatabase {
     return result;
   }
 
-  Future<int> insert(String tableName, Person person) async {
+  Future<int> insert(String tableName, Note person) async {
     Database db = await getDatabaseInstance();
-    Map<String, dynamic> values = Person.toMap(person);
+    Map<String, dynamic> values = Note.toMap(person);
     return await db.insert(tableName, values,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }

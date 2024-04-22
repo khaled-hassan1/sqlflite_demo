@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_settings.dart';
 import '../generated/l10n.dart';
 
 class CenterTextWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class CenterTextWidget extends StatelessWidget {
         style: Theme.of(context)
             .textTheme
             .titleLarge!
-            .copyWith(color: Colors.white, fontSize: 30),
+            .copyWith(color: AppSettings.white, fontSize: 30),
       ),
     );
   }

@@ -1,22 +1,22 @@
-class Person {
+class Note {
   String id, title, description;
 
-  Person({
+  Note({
     required this.id,
     required this.title,
     required this.description,
   });
 
-  static Map<String, dynamic> toMap(Person person) {
+  static Map<String, dynamic> toMap(Note note) {
     return {
-      'id': person.id.toString(),
-      'title': person.title,
-      'description': person.description,
+      'id': note.id,
+      'title': note.title,
+      'description': note.description,
     };
   }
 
-  factory Person.fromMap(Map<String, dynamic> map) {
-    return Person(
+  factory Note.fromMap(Map<String, dynamic> map) {
+    return Note(
       id: map['id'] ?? '',
       title: map['title'] ?? '',
       description: map['description'] ?? '',
