@@ -91,7 +91,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
     _controllerTitle.dispose();
     _dbHelper.close();
     myFocusNode.dispose();
-
     super.dispose();
   }
 
@@ -99,6 +98,38 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     S local = S.of(context);
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: TextFieldContainer(
+                  myFocusNode: myFocusNode,
+                  local: local,
+                  onTapOutside: (_) => unFocus(context),
+                  controllerTitle: _controllerTitle,
+                  controllerDescription: _controllerDescription,
+                  isEditing: _isEditing,
+                  onPressedEdit: () {
+                    _editNotes();
+                    Navigator.of(context).pop();
+                  },
+                  onPressedAdd: () {
+                    _addNotes();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
       appBar: AppBar(
         centerTitle: true,
         title: Text(local.title),
@@ -118,49 +149,55 @@ class _HomePageScreenState extends State<HomePageScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                color: const Color.fromARGB(255, 236, 191, 176),
-                // color: Theme.of(context).colorScheme.primary.withAlpha(10),
-                height: MediaQuery.of(context).size.height / 2,
-                width: double.infinity,
-                child: _getCount() == 0
-                    ? const CenterTextWidget()
-                    : ListNotes(
-                        notes: _notes,
-                        loadNotes: _loadNotes,
-                        titleController: _controllerTitle,
-                        descriptionController: _controllerDescription,
-                        isEditing: _isEditing,
-                        onNoteTap: (Note notes) {
-                          myFocusNode.requestFocus();
-                          setState(() {
-                            _isEditing = true;
-                            _editingnotes = notes;
-                            _controllerTitle.text = notes.title;
-                            _controllerDescription.text = notes.description;
-                          });
-                        },
-                      )),
-            const Divider(
-              endIndent: 100,
-              indent: 100,
-            ),
-            TextFieldContainer(
-              myFocusNode: myFocusNode,
-              local: local,
-              onTapOutside: (_) => unFocus(context),
-              controllerTitle: _controllerTitle,
-              controllerDescription: _controllerDescription,
-              isEditing: _isEditing,
-              onPressedEdit: _editNotes,
-              onPressedAdd: _addNotes,
-            ),
-          ],
-        ),
-      ),
+      body: Container(
+          color: const Color.fromARGB(255, 236, 191, 176),
+          // color: Theme.of(context).colorScheme.primary.withAlpha(10),
+          // height: MediaQuery.of(context).size.height / 2,
+          width: double.infinity,
+          child: _getCount() == 0
+              ? const CenterTextWidget()
+              : ListNotes(
+                  notes: _notes,
+                  loadNotes: _loadNotes,
+                  titleController: _controllerTitle,
+                  descriptionController: _controllerDescription,
+                  isEditing: _isEditing,
+                  onNoteTap: (Note notes) async {
+                    setState(() {
+                      _isEditing = true;
+                      _editingnotes = notes;
+                      _controllerTitle.text = notes.title;
+                      _controllerDescription.text = notes.description;
+                    });
+                    myFocusNode.requestFocus();
+                    await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: TextFieldContainer(
+                            myFocusNode: myFocusNode,
+                            local: local,
+                            onTapOutside: (_) => unFocus(context),
+                            controllerTitle: _controllerTitle,
+                            controllerDescription: _controllerDescription,
+                            isEditing: _isEditing,
+                            onPressedEdit: () {
+                              _editNotes();
+                              Navigator.of(context).pop();
+                            },
+                            onPressedAdd: () {
+                              // _addNotes();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  })),
       persistentFooterButtons: [
         Center(
           child: Text.rich(

@@ -31,7 +31,9 @@ class TextFieldContainer extends StatelessWidget {
       padding: AppSettings.all,
       child: Column(
         children: [
+          AppSettings.sizedBox(10),
           TextField(
+            maxLines: null,
             focusNode: myFocusNode,
             textInputAction: TextInputAction.next,
             onTapOutside: (_) => onTapOutside(context),
@@ -43,6 +45,7 @@ class TextFieldContainer extends StatelessWidget {
           ),
           AppSettings.sizedBox(20),
           TextField(
+              maxLines: null,
               textInputAction: TextInputAction.done,
               onTapOutside: (_) => onTapOutside(context),
               controller: controllerDescription,
@@ -60,7 +63,8 @@ class TextFieldContainer extends StatelessWidget {
                   .titleLarge!
                   .copyWith(color: AppSettings.deepOrange),
             ),
-          )
+          ),
+          AppSettings.sizedBox(20),
         ],
       ),
     );

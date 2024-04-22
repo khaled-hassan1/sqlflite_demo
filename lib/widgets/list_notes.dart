@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sqlite_demo/widgets/app_settings.dart';
 
 import '../helper/db_helper.dart';
@@ -33,8 +34,11 @@ class _ListNotesState extends State<ListNotes> {
 
   @override
   Widget build(BuildContext context) {
+    widget.notes
+        .sort((a, b) => DateTime.parse(b.id).compareTo(DateTime.parse(a.id)));
+
     return ListView.builder(
-      reverse: true,
+      // reverse: true,
       itemCount: widget.notes.length,
       itemBuilder: (context, index) {
         final note = widget.notes[index];
@@ -48,7 +52,7 @@ class _ListNotesState extends State<ListNotes> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             subtitle: Text(
-              '${note.description} /n ${note.id}',
+              '${note.description} \n${DateFormat.yMEd().add_jm().format(DateTime.parse(note.id))}',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
@@ -59,6 +63,7 @@ class _ListNotesState extends State<ListNotes> {
               icon: const Icon(
                 Icons.delete,
                 color: Colors.red,
+                size: 30,
               ),
               onPressed: () async {
                 await _dbHelper.deleteNote(note.id);
