@@ -70,6 +70,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Locale _locale = const Locale('en');
+  ThemeMode _themeMode = ThemeMode.light;
+  bool _isDark = true;
+
+  void _toggleThemeMode() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+
+      _isDark = !_isDark;
+    });
+  }
 
   void _changeLocale(Locale newLocale) {
     setState(() {
@@ -114,6 +125,7 @@ class _MyAppState extends State<MyApp> {
         Locale('en'),
         Locale('ar'),
       ],
+      darkTheme: ThemeData.dark(useMaterial3: true),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         inputDecorationTheme: const InputDecorationTheme(
@@ -126,12 +138,15 @@ class _MyAppState extends State<MyApp> {
               size: 28,
             ),
             elevation: 0,
-            titleTextStyle: TextStyle(color:  AppSettings.white, fontSize: 25),
+            titleTextStyle: TextStyle(color: AppSettings.white, fontSize: 25),
             backgroundColor: Color.fromARGB(234, 228, 73, 22)),
         colorScheme: ColorScheme.fromSeed(seedColor: AppSettings.deepOrange),
         useMaterial3: true,
       ),
+      themeMode: _themeMode,
       home: HomePageScreen(
+          isDark: _isDark,
+          onThemeModeChanged: _toggleThemeMode,
           locale: _locale,
           onLocaleChanged: (locale, langCode) {
             _saveLocale(langCode);
