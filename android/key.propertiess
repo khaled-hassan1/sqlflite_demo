@@ -1,0 +1,5 @@
+storePassword=111111
+keyPassword=111111
+keyAlias=upload
+// update key coz old lost
+storeFile=C:/Users/khaled-ghaly/upload-keystore-mbc3-movies-free.jks
